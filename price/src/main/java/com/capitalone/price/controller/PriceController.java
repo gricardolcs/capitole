@@ -1,9 +1,9 @@
 package com.capitalone.price.controller;
 
+import com.capitalone.price.config.PriceApi;
 import com.capitalone.price.dto.PriceResponseDto;
 import com.capitalone.price.model.Price;
 import com.capitalone.price.service.PriceService;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
@@ -11,16 +11,15 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
-@Tag(name = "Price API", description = "Endpoints for retrieving product prices")
 @RequestMapping("/api")
-public class PriceController {
+public class PriceController implements PriceApi {
     private final PriceService priceService;
 
     public PriceController(PriceService priceService) {
         this.priceService = priceService;
     }
 
-
+    @Override
     @GetMapping("/prices")
     public ResponseEntity<PriceResponseDto> getPrice(
            @RequestParam String date,
@@ -36,9 +35,8 @@ public class PriceController {
         if (price == null) {
             return ResponseEntity.notFound().build();
         }
-
-        PriceResponseDto x = mapToDto(price);
-        return ResponseEntity.ok(x);
+        PriceResponseDto priceResponseDto = mapToDto(price);
+        return ResponseEntity.ok(priceResponseDto);
     }
 
     private PriceResponseDto mapToDto(Price price) {
